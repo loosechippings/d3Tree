@@ -1,0 +1,66 @@
+<html>
+	<head>
+		<style>
+			h1 {font-family:arial;}
+			.node {fill:#fff;
+					stroke:red;
+					stroke-width:1.5px}
+			.border {
+				fill:none;
+				stroke:#000;
+				stroke-width:1px;
+			}
+			.link {
+				fill:none;
+				stroke:#ccc;
+				stroke-width:2px;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script type="text/javascript">
+			var width=1000
+			var height=1000
+			var nodeRadius=4
+			var border={left:nodeRadius, right:nodeRadius, top:nodeRadius, bottom:nodeRadius}
+			
+			var treeData={"name":"head","children":[{"name":"one"},{"name":"two"},{"name":"three"}]}
+
+			var svg=d3.select("body").append("svg")
+				.attr("width",width)
+				.attr("height",height)
+				.attr("translate","transform (10,10)")
+				
+			svg.append("rect")
+				.attr("width",width)
+				.attr("height",height)
+				.attr("class","border")
+				
+			var diagonal=d3.svg.diagonal()
+				
+			var tree=d3.layout.tree().
+				size([width-border.left-border.right,height-border.top-border.bottom])
+			
+			var nodes=tree.nodes(treeData)
+			var links=tree.links(nodes)
+			
+			svg.selectAll(".link").data(links)
+				.enter()
+				.append("path")
+				.attr("class","link")
+				.attr("d",diagonal)
+				.attr("transform","translate ("+border.left+","+border.top+")")			
+
+			svg.selectAll(".node").data(nodes).enter()
+				.append("svg:circle")
+				.attr("transform","translate ("+border.left+","+border.top+")")
+				.attr("r",nodeRadius)
+				.attr("cx",function(d) {return d.x})
+				.attr("cy",function(d) {return d.y})
+				.attr("class","node")
+
+		</script>
+	</body>
+</html>
+	
