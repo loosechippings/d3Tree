@@ -1,9 +1,8 @@
 <html>
 	<head>
 		<style>
-			h1 {font-family:arial;}
 			.node {fill:#fff;
-					stroke:red;
+					stroke:#555;
 					stroke-width:1.5px}
 			.border {
 				fill:none;
@@ -15,6 +14,9 @@
 				stroke:#ccc;
 				stroke-width:2px;
 			}
+			.className {
+				font:12px sans-serif;;
+			}
 		</style>
 	</head>
 	<body>
@@ -22,10 +24,19 @@
 		<script type="text/javascript">
 			var width=1000
 			var height=1000
-			var nodeRadius=4
-			var border={left:nodeRadius, right:nodeRadius, top:nodeRadius, bottom:nodeRadius}
+			var boxWidth=100
+			var boxHeight=20
+			var border={left:boxWidth/2, right:boxWidth/2, top:1, bottom:boxHeight+1}
 			
-			var treeData={"name":"head","children":[{"name":"one"},{"name":"two"},{"name":"three"}]}
+			var treeData={"name":"head","children":[{"name":"one","attributes":["a1","a2","a3"]},{"name":"two"},{"name":"three"}]}
+			
+			var xoff=function(d) {
+				return d.x+border.left-boxWidth/2;
+			}
+			
+			var yoff=function(d) {
+				return d.y+border.top;
+			}
 
 			var svg=d3.select("body").append("svg")
 				.attr("width",width)
@@ -52,13 +63,21 @@
 				.attr("d",diagonal)
 				.attr("transform","translate ("+border.left+","+border.top+")")			
 
-			svg.selectAll(".node").data(nodes).enter()
-				.append("svg:circle")
-				.attr("transform","translate ("+border.left+","+border.top+")")
-				.attr("r",nodeRadius)
-				.attr("cx",function(d) {return d.x})
-				.attr("cy",function(d) {return d.y})
+			var nodeContainer=svg.selectAll(".node")
+				.data(nodes)
+				.enter()
+				.append("g")
+				.attr("transform",function(d) {return "translate ("+xoff(d)+","+yoff(d)+")"})
+
+			nodeContainer.append("svg:rect")
+				.attr("width",boxWidth)
+				.attr("height",boxHeight)
 				.attr("class","node")
+				
+			nodeContainer.append("text")
+				.text(function(d) {return d.name})
+				.attr("class","className")
+				.attr("dominant-baseline","text-before-edge")
 
 		</script>
 	</body>
