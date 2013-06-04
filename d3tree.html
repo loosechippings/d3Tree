@@ -27,6 +27,7 @@
 			var height=1000
 			var boxWidth=100
 			var boxHeight=20
+			var boxHorizontalSpace=50
 			var border={left:boxWidth/2, right:boxWidth/2, top:1, bottom:boxHeight+1}
 			var fill=true
 			var counter=[]
@@ -53,31 +54,39 @@
 				return d.y+border.top;
 			}
 
-			var svg=d3.select("body").append("svg")
-				.attr("width",width)
-				.attr("height",height)
-				.attr("translate","transform (10,10)")
-				
-			svg.append("rect")
-				.attr("width",width)
-				.attr("height",height)
-				.attr("class","border")
-				
+			function elbow(d, i) {
+			  return "M" + d.source.x + "," + d.source.y
+			       + "V" + (d.target.y-50) + "H" + d.target.x+"V"+d.target.y;
+			}
+
 			var diagonal=d3.svg.diagonal()
 				
 			var tree=d3.layout.tree()
 				.size([width-border.left-border.right,height-border.top-border.bottom])
 			
 			var nodes=tree.nodes(treeData)
-			console.log(maxNodeWidth())
+			width=maxNodeWidth()*(boxWidth+boxHorizontalSpace)
+			tree=tree.size([width,height])
 
+			// recalculate nodes
+			nodes=tree.nodes(treeData)
 			var links=tree.links(nodes)
-			
+
+			var svg=d3.select("body").append("svg")
+				.attr("width",width+border.left+border.right)
+				.attr("height",height+border.top+border.bottom+boxHeight)
+				.attr("translate","transform (10,10)")
+				
+			svg.append("rect")
+				.attr("width",width)
+				.attr("height",height+boxHeight)
+				.attr("class","border")
+				
 			svg.selectAll(".link").data(links)
 				.enter()
 				.append("path")
 				.attr("class","link")
-				.attr("d",diagonal)
+				.attr("d",elbow)
 				.attr("transform","translate ("+border.left+","+border.top+")")			
 
 			var nodeContainer=svg.selectAll(".node")
