@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<style>
-			.node {fill:#fff;
+			.node {fill:#eef;
 					stroke:#555;
 					stroke-width:1.5px}
 			.border {
@@ -21,20 +21,35 @@
 	</head>
 	<body>
 		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script src="./data.js"></script>
 		<script type="text/javascript">
 			var width=1000
 			var height=1000
 			var boxWidth=100
 			var boxHeight=20
 			var border={left:boxWidth/2, right:boxWidth/2, top:1, bottom:boxHeight+1}
+			var fill=true
+			var counter=[]
 			
-			var treeData={"name":"head","children":[{"name":"one","attributes":["a1","a2","a3"]},{"name":"two"},{"name":"three"}]}
+			function maxNodeWidth() {
+				for (var n=0;n<nodes.length;n++) {
+					node=nodes[n]
+					if (counter[node.depth]===undefined) {
+						counter[node.depth]=0
+					}
+					else {
+						counter[node.depth]=counter[node.depth]+1
+					}
+				}
+
+				return d3.max(counter)
+			}
 			
-			var xoff=function(d) {
+			function xoff(d) {
 				return d.x+border.left-boxWidth/2;
 			}
 			
-			var yoff=function(d) {
+			function yoff(d) {
 				return d.y+border.top;
 			}
 
@@ -50,10 +65,12 @@
 				
 			var diagonal=d3.svg.diagonal()
 				
-			var tree=d3.layout.tree().
-				size([width-border.left-border.right,height-border.top-border.bottom])
+			var tree=d3.layout.tree()
+				.size([width-border.left-border.right,height-border.top-border.bottom])
 			
 			var nodes=tree.nodes(treeData)
+			console.log(maxNodeWidth())
+
 			var links=tree.links(nodes)
 			
 			svg.selectAll(".link").data(links)
@@ -78,6 +95,7 @@
 				.text(function(d) {return d.name})
 				.attr("class","className")
 				.attr("dominant-baseline","text-before-edge")
+
 
 		</script>
 	</body>
