@@ -64,11 +64,13 @@
 			var tree=d3.layout.tree()
 				.size([width-border.left-border.right,height-border.top-border.bottom])
 			
+			// calculate nodes once to find out how many nodes at each level
 			var nodes=tree.nodes(treeData)
+			// calculate and set correct size
 			width=maxNodeWidth()*(boxWidth+boxHorizontalSpace)
 			tree=tree.size([width,height])
 
-			// recalculate nodes
+			// recalculate nodes with new size
 			nodes=tree.nodes(treeData)
 			var links=tree.links(nodes)
 
@@ -104,6 +106,20 @@
 				.text(function(d) {return d.name})
 				.attr("class","className")
 				.attr("dominant-baseline","text-before-edge")
+
+			var attributeContainer=nodeContainer.append("g")
+				.attr("transform","translate (0,"+boxHeight+")")
+
+			attributeContainer.selectAll(".attributes")
+				.data(function(d) {return d.attributes===undefined?[]:d.attributes})
+				.enter()
+				.append("text")
+				.text(function(d) {return d})
+				.attr("dominant-baseline","text-before-edge")
+				.attr("class",".attributes")
+				.attr("y",function(d,i) {i*10})
+
+			var attributes=nodeContainer.select
 
 
 		</script>
